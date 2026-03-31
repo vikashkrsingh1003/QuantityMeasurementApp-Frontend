@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantity Measurement App</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- POPUP -->
+    <div id="popup-overlay" class="popup-overlay">
+        <div class="popup-card" id="popup-card">
+            <span id="popup-icon" class="popup-icon">✅</span>
+            <h2 id="popup-title">Success</h2>
+            <p id="popup-message">Action completed.</p>
+            <button id="popup-btn" class="popup-btn" onclick="closePopup()">Continue</button>
+        </div>
+    </div>
+
+    <!-- AUTH -->
+    <div class="centreDiv" id="auth-page">
+        <div class="leftBannerDiv">
+            <img src="logo.jp">
+            <h1>Quantity Measurement</h1>
+        </div>
+
+        <div class="auth-container">
+            <div class="tabs">
+                <div id="login-tab" class="tab" onclick="switchTab('login')">Login</div>
+                <div id="signup-tab" class="tab active" onclick="switchTab('signup')">Signup</div>
+            </div>
+
+            <form id="auth-form">
+                <div class="input-group" id="name-group">
+                    <label>Full Name</label>
+                    <input type="text" id="fullname">
+                </div>
+
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="email" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="password" required>
+                </div>
+
+                <div class="input-group" id="mobile-group">
+                    <label>Mobile</label>
+                    <input type="tel" id="mobile">
+                </div>
+
+                <button type="submit" class="submit-btn" id="submit-btn">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard">
+        <div class="dash-header">
+            <button class="logout-btn" onclick="triggerLogout()">Logout</button>
+            <h2>Quantity Measurement App</h2>
+        </div>
+
+        <p class="section-label">Type</p>
+        <div class="type-grid">
+            <div class="type-card active" onclick="setType('length', this)">Length</div>
+            <div class="type-card" onclick="setType('weight', this)">Weight</div>
+            <div class="type-card" onclick="setType('temp', this)">Temperature</div>
+            <div class="type-card" onclick="setType('volume', this)">Volume</div>
+        </div>
+
+        <p class="section-label">Action</p>
+        <div class="action-bar">
+            <button class="action-btn active" onclick="setAction('compare', this)">Compare</button>
+            <button class="action-btn" onclick="setAction('convert', this)">Convert</button>
+            <button class="action-btn" onclick="setAction('arithmetic', this)">Add</button>
+        </div>
+
+        <div class="tool-container">
+            <div class="val-box">
+                <input type="number" id="val-left" value="1" oninput="calc()">
+                <select id="unit-left" onchange="calc()"></select>
+            </div>
+
+            <div id="op-icon">↔</div>
+
+            <div class="val-box">
+                <input type="number" id="val-right" value="1" oninput="calc()">
+                <select id="unit-right" onchange="calc()"></select>
+            </div>
+        </div>
+
+        <div class="result-panel">
+            <div id="res-display">Equal</div>
+            <select id="unit-res" class="hidden" onchange="calc()"></select>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="script.js"></script>
+</body>
+</html>
