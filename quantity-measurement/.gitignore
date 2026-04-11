@@ -1,0 +1,76 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Node modules
+/node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+/dist
+/build
+/tmp
+/out-tsc
+
+# Angular cache
+/.angular/cache
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+/.vscode/*
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/settings.json
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+/logs
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Angular specific
+.angular
+.angular/cache
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Coverage directory (testing)
+/coverage
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Firebase (if used later)
+.firebase/
+
+# Temporary files
+*.tmp
+*.temp
+
+# MacOS
+.AppleDouble
+.LSOverride
+
+# Windows
+ehthumbs.db
+Desktop.ini

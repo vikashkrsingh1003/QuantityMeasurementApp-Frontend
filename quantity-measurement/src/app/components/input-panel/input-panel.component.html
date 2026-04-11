@@ -1,0 +1,21 @@
+<div class="input-panel" [formGroup]="form">
+  <p class="panel-label">{{ label }}</p>
+  <div class="panel-body">
+    <div class="value-field" [class.error]="hasValueError">
+      <input
+        type="number"
+        class="value-input"
+        [formControlName]="valueControlName"
+        placeholder="0"
+        autocomplete="off"
+      />
+      <div class="error-msg" *ngIf="hasValueError">Required numeric value</div>
+    </div>
+    <div class="unit-field">
+      <select class="unit-select" [formControlName]="unitControlName">
+        <option *ngFor="let unit of units" [value]="unit.value">{{ unit.label }}</option>
+      </select>
+      <span class="select-arrow">▾</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,101 @@
+<div class="history-container">
+  <div class="history-header">
+    <h2 class="history-title">Activity History</h2>
+    <button class="back-btn" (click)="goBack()">← Back to Calculator</button>
+  </div>
+
+  <!-- MEASUREMENT TYPE TABS -->
+  <div class="type-tabs">
+    <button *ngFor="let type of measurementTypes"
+            class="type-tab"
+            [class.active]="selectedType() === type.value"
+            (click)="selectType(type.value)">
+      {{ type.label }}
+    </button>
+  </div>
+
+  <!-- LOADING -->
+  <div class="hist-loading" *ngIf="isLoading()">
+    <div class="dots"><span></span><span></span><span></span></div>
+    <p>Loading history...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div class="hist-error" *ngIf="error() && !isLoading()">
+    <span>⚠️</span> {{ error() }}
+  </div>
+
+  <!-- EMPTY -->
+  <div class="hist-empty" *ngIf="!isLoading() && !error() && historyItems().length === 0">
+    <span class="empty-icon">📭</span>
+    <p>No records found</p>
+  </div>
+
+  <!-- RECORDS -->
+  <div class="hist-cards" *ngIf="!isLoading() && !error() && historyItems().length > 0">
+    <div class="hist-card" *ngFor="let item of displayItems(); let i = index"
+         [class.card-error]="!item.is_success"
+         [style.animation-delay]="(i * 40) + 'ms'">
+
+      <!-- Left border indicator -->
+      <div class="card-border" [class.border-ok]="item.is_success" [class.border-err]="!item.is_success"></div>
+
+      <div class="card-content">
+        <!-- Card Header: Badge + Status + Time -->
+        <div class="card-header">
+          <span class="op-badge" [ngClass]="getOperationBadgeClass(item.operation)">
+            <span class="badge-icon">{{ item.operation_icon }}</span>
+            <span class="badge-text">{{ (item.operation ?? 'OP') | uppercase }}</span>
+          </span>
+
+          <span class="measurement-type" [title]="'Measurement Type: ' + item.measurement_display">
+            📍 {{ item.measurement_display }}
+          </span>
+
+          <span class="card-status" [class.status-ok]="item.is_success" [class.status-err]="!item.is_success">
+            {{ item.is_success ? '✓ Success' : '✗ Failed' }}
+          </span>
+
+          <span class="card-time">{{ item.relative_time }}</span>
+        </div>
+
+        <!-- Card Body: Expression on left, Result on right -->
+        <div class="card-body">
+          <!-- Input Expression -->
+          <div class="expr-section">
+            <!-- Show expression when we have both value and unit -->
+            <div class="expr-compare" *ngIf="item.value1 != null && item.unit1; else noExprData">
+              <span class="expr-val">{{ item.value1 }}</span>
+              <span class="expr-unit">{{ item.unit1 }}</span>
+
+              <!-- Operator with proper symbol -->
+              <span class="expr-op" *ngIf="item.value2 != null">
+                {{ getOperatorSymbol(item.operation) }}
+              </span>
+
+              <span class="expr-val" *ngIf="item.value2 != null">{{ item.value2 }}</span>
+              <span class="expr-unit" *ngIf="item.unit2">{{ item.unit2 }}</span>
+            </div>
+
+            <!-- No valid expression data -->
+            <ng-template #noExprData>
+              <div class="expr-compare no-data">
+                <span class="no-data-text"></span>
+              </div>
+            </ng-template>
+          </div>
+
+          <!-- Result Section (Right Aligned) -->
+          <div class="result-section">
+            <div class="result-label">RESULT</div>
+            <div class="result-value" [class.result-err]="!item.is_success">
+              {{ formatResult(item) }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="refresh-btn" (click)="load()">🔄 Refresh</button>
+</div>

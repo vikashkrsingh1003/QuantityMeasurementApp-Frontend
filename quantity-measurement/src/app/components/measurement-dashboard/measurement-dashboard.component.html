@@ -1,0 +1,213 @@
+<div class="app-shell">
+
+  <!-- ═══════ HEADER ═══════ -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <span class="header-logo">⚗️</span>
+        <h1 class="header-title">Quantity Measurement</h1>
+      </div>
+
+      <div class="header-right">
+        <ng-container *ngIf="!loggedIn">
+          <button class="hdr-btn hdr-btn-outline" (click)="goToLogin()">
+            <span class="btn-icon">🔐</span>
+            <span class="btn-text">Login</span>
+          </button>
+          <button class="hdr-btn hdr-btn-primary" (click)="goToSignup()">
+            <span class="btn-icon">✨</span>
+            <span class="btn-text">Signup</span>
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="loggedIn">
+          <button class="hdr-btn hdr-btn-outline history-toggle" (click)="toggleHistory()">
+            <span class="btn-icon">📊</span>
+            <span class="btn-text">History</span>
+          </button>
+
+          <!-- User Profile Menu -->
+          <div class="user-menu-wrapper">
+            <button class="hdr-btn hdr-btn-user" (click)="toggleUserMenu()" [class.active]="userMenuOpen">
+              <span class="avatar">👤</span>
+              <span class="user-name">{{ authService.userName() || 'User' }}</span>
+              <span class="menu-chevron" [class.open]="userMenuOpen">▼</span>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div class="user-dropdown" *ngIf="userMenuOpen" [@slide]>
+              <button class="dropdown-item danger-item" (click)="logout(); closeUserMenu()">
+                <span class="item-icon">🚪</span>
+                <span class="item-text">Logout</span>
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Animated gradient line at bottom -->
+    <div class="header-accent-line"></div>
+  </header>
+
+  <!-- TOAST -->
+  <div class="toast-container" *ngIf="hasToast">
+    <div class="toast"
+         [class.toast-success]="toastType === 'success'"
+         [class.toast-error]="toastType === 'error'">
+      <span>{{ toastType === 'success' ? '✅' : '❌' }}</span> {{ toastText }}
+    </div>
+  </div>
+
+  <!-- ═══════ MAIN ═══════ -->
+  <main class="main-content">
+    <div class="dashboard-grid">
+
+      <section class="card main-panel">
+
+        <!-- STEP 1: CHOOSE TYPE -->
+        <div class="section-block">
+          <p class="section-label"><span class="label-dot"></span>CHOOSE TYPE</p>
+          <div class="type-cards-grid">
+            <div *ngFor="let config of measurementConfigs"
+                 class="type-card"
+                 [class.selected]="selectedMeasurement().label === config.label"
+                 (click)="selectMeasurement(config)"
+                 role="button"
+                 [attr.aria-pressed]="selectedMeasurement().label === config.label">
+              <span class="type-icon">{{ config.icon }}</span>
+              <span class="type-label">{{ config.label }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: CHOOSE ACTION -->
+        <div class="section-block">
+          <p class="section-label"><span class="label-dot"></span>CHOOSE ACTION</p>
+          <div class="action-tabs">
+            <button class="action-tab" [class.active]="selectedMainOp() === 'compare'"
+                    (click)="selectMainOp('compare')">Comparison</button>
+            <button class="action-tab" [class.active]="selectedMainOp() === 'convert'"
+                    (click)="selectMainOp('convert')">Conversion</button>
+            <!-- Arithmetic tab hidden for Temperature -->
+            <button *ngIf="!hideArithmeticTab"
+                    class="action-tab" [class.active]="selectedMainOp() === 'arithmetic'"
+                    (click)="selectMainOp('arithmetic')">Arithmetic</button>
+          </div>
+
+          <!-- Temperature hint: only Compare + Convert available -->
+          <div class="temp-info-bar" *ngIf="hideArithmeticTab">
+            <span>🌡️</span>
+            Temperature only supports <strong>Comparison</strong> and <strong>Conversion</strong>.
+          </div>
+
+          <!-- Arithmetic sub-tabs (never shown for Temperature) -->
+          <div class="arithmetic-tabs" *ngIf="isArithmetic && !hideArithmeticTab">
+            <button *ngFor="let arith of arithmeticOps"
+                    class="arith-tab"
+                    [class.active]="selectedArithmetic() === arith.value"
+                    (click)="selectArithmetic(arith.value)">
+              <span class="arith-symbol">{{ arith.symbol }}</span>{{ arith.label }}
+            </button>
+          </div>
+
+          <!-- Conversion hint -->
+          <div class="convert-hint" *ngIf="isConvert">
+            <span>ℹ️</span>
+            Enter your value and choose the <strong>target unit</strong> — no second value needed.
+          </div>
+        </div>
+
+        <!-- STEP 3: INPUTS + FORM -->
+        <form [formGroup]="form" (ngSubmit)="calculate()" novalidate>
+          <div class="section-block">
+
+            <!-- ── CONVERSION layout: Value 1 → Target Unit ── -->
+            <ng-container *ngIf="isConvert">
+              <div class="inputs-row">
+
+                <!-- Value 1 (source) -->
+                <app-input-panel
+                  label="VALUE TO CONVERT"
+                  valueControlName="value1"
+                  unitControlName="unit1"
+                  [form]="form"
+                  [units]="currentUnits()">
+                </app-input-panel>
+
+                <div class="operator-badge">
+                  <span class="operator-symbol">→</span>
+                </div>
+
+                <!-- Target unit panel (hidden value2, shows resultUnit) -->
+                <div class="target-panel">
+                  <p class="panel-label">TARGET UNIT</p>
+                  <div class="panel-body" [formGroup]="form">
+                    <div class="target-placeholder">
+                      <span class="target-icon">🎯</span>
+                      <span class="target-hint">Choose target unit</span>
+                    </div>
+                    <div class="unit-field">
+                      <select class="unit-select" formControlName="resultUnit">
+                        <option *ngFor="let u of currentUnits()" [value]="u.value">{{ u.label }}</option>
+                      </select>
+                      <span class="select-arrow">▾</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- ── COMPARE / ARITHMETIC layout: Value 1  OP  Value 2 ── -->
+            <ng-container *ngIf="!isConvert">
+              <div class="inputs-row">
+                <app-input-panel
+                  label="VALUE 1"
+                  valueControlName="value1"
+                  unitControlName="unit1"
+                  [form]="form"
+                  [units]="currentUnits()">
+                </app-input-panel>
+
+                <div class="operator-badge">
+                  <span class="operator-symbol">{{ operatorSymbol() }}</span>
+                </div>
+
+                <app-input-panel
+                  label="VALUE 2"
+                  valueControlName="value2"
+                  unitControlName="unit2"
+                  [form]="form"
+                  [units]="currentUnits()">
+                </app-input-panel>
+              </div>
+            </ng-container>
+          </div>
+
+          <!-- RESULT -->
+          <div class="section-block">
+            <app-result-display
+              [result]="result()"
+              [isLoading]="isLoading()"
+              [errorMessage]="errorMsg()"
+              [showResultUnit]="showResultUnit && !isConvert"
+              [units]="currentUnits()"
+              [form]="form">
+            </app-result-display>
+          </div>
+
+          <!-- CALCULATE -->
+          <div class="calc-btn-row">
+            <button type="submit" class="calc-btn" [disabled]="form.invalid || isLoading()">
+              <span *ngIf="!isLoading()">⚡ Calculate</span>
+              <span *ngIf="isLoading()" class="spinner-wrap">
+                <span class="spinner"></span> Processing...
+              </span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+    </div>
+  </main>
+</div>

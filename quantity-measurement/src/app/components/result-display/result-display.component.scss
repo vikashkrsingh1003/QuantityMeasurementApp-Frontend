@@ -1,0 +1,86 @@
+.result-card {
+  background: var(--bg-surface);
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 100px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  &.has-result { border-color: var(--color-primary-light); box-shadow: 0 4px 20px rgba(99,102,241,0.1); }
+  &.has-error { border-color: #fca5a5; background: #fef2f2; }
+}
+.result-left { flex: 1; }
+.result-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--color-muted);
+  margin: 0 0 8px;
+}
+.result-value-wrap { display: flex; flex-direction: column; gap: 4px; }
+.result-value {
+  font-family: var(--font-body);
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  line-height: 1;
+  &.result-number { color: var(--color-primary); }
+  &.result-true { color: #059669; font-size: 1.2rem; }
+  &.result-false { color: #dc2626; font-size: 1.2rem; }
+}
+.result-string {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  font-style: italic;
+  margin-top: 4px;
+}
+.result-loading {
+  display: flex; align-items: center; gap: 14px;
+  p { color: var(--color-muted); font-size: 0.9rem; font-weight: 500; margin: 0; }
+}
+.pulse-bar {
+  width: 80px; height: 6px;
+  background: linear-gradient(90deg, var(--color-primary-light), var(--color-primary), var(--color-primary-light));
+  background-size: 200% 100%;
+  border-radius: 50px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+.result-error {
+  color: #dc2626;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
+}
+.result-right { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+.unit-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--color-muted);
+  margin: 0;
+}
+.result-unit-select { position: relative; }
+.unit-sel {
+  padding: 10px 40px 10px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-card);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  min-width: 140px;
+  transition: border-color 0.18s;
+  &:focus { border-color: var(--color-primary); }
+}
+.sel-arrow {
+  position: absolute; right: 12px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-muted);
+  pointer-events: none;
+}

@@ -1,0 +1,38 @@
+<div class="result-card" [class.has-result]="result !== null" [class.loading]="isLoading" [class.has-error]="errorMessage">
+  <div class="result-left">
+    <p class="result-label">RESULT</p>
+
+    <div *ngIf="isLoading" class="result-loading">
+      <div class="pulse-bar"></div>
+      <p>Computing...</p>
+    </div>
+
+    <div *ngIf="!isLoading && errorMessage" class="result-error">
+      <span>⚠️</span> {{ errorMessage }}
+    </div>
+
+    <div *ngIf="!isLoading && !errorMessage" class="result-value-wrap">
+      <span
+        class="result-value"
+        [class.result-true]="boolResult === true"
+        [class.result-false]="boolResult === false"
+        [class.result-number]="!isBoolean && result !== null"
+      >
+        <span *ngIf="boolResult === true">✅ True</span>
+        <span *ngIf="boolResult === false">❌ False</span>
+        <span *ngIf="boolResult === null">{{ displayValue }}</span>
+      </span>
+      <span class="result-string" *ngIf="result && !result.isString && result.text">{{ result.text }}</span>
+    </div>
+  </div>
+
+  <div class="result-right" *ngIf="showResultUnit && form" [formGroup]="form">
+    <p class="unit-label">RESULT UNIT</p>
+    <div class="result-unit-select">
+      <select formControlName="resultUnit" class="unit-sel">
+        <option *ngFor="let unit of units" [value]="unit.value">{{ unit.label }}</option>
+      </select>
+      <span class="sel-arrow">▾</span>
+    </div>
+  </div>
+</div>
