@@ -9,7 +9,7 @@ import { extractNameFromJwt, extractEmailFromJwt } from '../utils/jwt.util';
 export class AuthService {
   private readonly http     = inject(HttpClient);
   private readonly router   = inject(Router);
-  private readonly BASE_URL = 'http://localhost:8080/api/v1/auth';
+  private readonly BASE_URL = 'http://localhost:8080/auth';
 
   /**
    * OAuth2 URLs:

@@ -7,7 +7,7 @@ import { QuantityInputDTO, QuantityResponseDTO, HistoryRecord } from '../models/
 @Injectable({ providedIn: 'root' })
 export class QuantityService {
   private readonly http = inject(HttpClient);
-  private readonly BASE = 'http://localhost:8080/api/v1/quantities';
+  private readonly BASE = 'http://localhost:8080/quantities';
 
   compare(payload: QuantityInputDTO): Observable<QuantityResponseDTO> {
     return this.http.post<QuantityResponseDTO>(`${this.BASE}/compare`, payload)
